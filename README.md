@@ -77,7 +77,7 @@ A **production-grade Retrieval-Augmented Generation (RAG) chatbot** specialized 
 
 ```bash
 # 1. Clone
-git clone https://github.com/YOUR_USERNAME/multi-doc-rag-chatbot.git
+git clone https://github.com/vedika0806/multi-doc-rag-chatbot.git
 cd multi-doc-rag-chatbot
 
 # 2. Install Ollama and pull a model
@@ -100,7 +100,7 @@ streamlit run app/main.py
 ### Option 2: Docker Compose (One command)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/multi-doc-rag-chatbot.git
+git clone https://github.com/vedika0806/multi-doc-rag-chatbot.git
 cd multi-doc-rag-chatbot
 
 # Start app + Ollama sidecar
@@ -241,7 +241,7 @@ pytest tests/ --cov=app --cov-report=html
 
 **Vedika Sumbli**
 MS Applied Data Intelligence, San Jose State University
-[LinkedIn](https://linkedin.com/in/vedika-sumbli) · [GitHub](https://github.com/YOUR_USERNAME) · [Portfolio](https://YOUR_USERNAME.github.io)
+[LinkedIn](https://linkedin.com/in/vedikasumbli) · [GitHub](https://github.com/vedika0806)
 
 ---
 
