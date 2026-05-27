@@ -6,9 +6,11 @@ Cybersecurity Intelligence Assistant
 import streamlit as st
 import tempfile
 import os
-import time
 import plotly.graph_objects as go
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from app.rag_engine import RAGEngine  # noqa: E402
 
 # ── Page config (must be first) ───────────────────────────────────────────────
 st.set_page_config(
@@ -17,11 +19,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
-# ── Import engine ─────────────────────────────────────────────────────────────
-import sys
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from app.rag_engine import RAGEngine
 
 # ── CSS ───────────────────────────────────────────────────────────────────────
 st.markdown("""
@@ -405,7 +402,7 @@ with st.sidebar:
                 <span style="color:#475569">{doc.preview[:120]}...</span>
                 </div>
                 """, unsafe_allow_html=True)
-                if st.button(f"🗑 Remove", key=f"del_{doc.doc_id}"):
+                if st.button("🗑 Remove", key=f"del_{doc.doc_id}"):
                     engine.delete_document(doc.doc_id)
                     st.session_state.ingested_docs = [
                         d for d in st.session_state.ingested_docs if d.doc_id != doc.doc_id
@@ -586,11 +583,11 @@ with source_col:
         # Retrieval score chart
         if last_result.retrieval_scores:
             fig = go.Figure(go.Bar(
-                x=[f"chunk {i+1}" for i in range(len(last_result.retrieval_scores))],
+                x=[f"chunk {i + 1}" for i in range(len(last_result.retrieval_scores))],
                 y=last_result.retrieval_scores,
                 marker=dict(
                     color=last_result.retrieval_scores,
-                    colorscale=[[0, "#1e293b"], [0.5, "#00d4ff44"], [1, "#00d4ff"]],
+                    colorscale=[[0, "#1e293b"], [0.5, "#00d4ff44"], [1.0, "#00d4ff"]],
                     showscale=False,
                 ),
                 text=[f"{s:.3f}" for s in last_result.retrieval_scores],

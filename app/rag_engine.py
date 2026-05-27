@@ -6,14 +6,12 @@ Vector store: ChromaDB (persistent)
 LLM: Ollama (llama3 / mistral, auto-detected)
 """
 
-import os
 import hashlib
 import logging
 import requests
-import tempfile
 from pathlib import Path
 from typing import List, Dict, Tuple, Optional, Any
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 
 import ollama
@@ -54,6 +52,8 @@ Context from retrieved documents:
 """
 
 # ── Data classes ───────────────────────────────────────────────────────────────
+
+
 @dataclass
 class IngestedDocument:
     doc_id: str
@@ -65,6 +65,7 @@ class IngestedDocument:
     page_count: int = 0
     preview: str = ""
 
+
 @dataclass
 class RetrievalResult:
     answer: str
@@ -75,6 +76,8 @@ class RetrievalResult:
     token_estimate: int
 
 # ── RAG Engine ─────────────────────────────────────────────────────────────────
+
+
 class RAGEngine:
     def __init__(self):
         self._embedding_model: Optional[SentenceTransformer] = None
@@ -281,7 +284,7 @@ class RAGEngine:
         # 3. Build context
         context_parts = []
         for i, (doc, meta) in enumerate(zip(docs, metas)):
-            source_label = f"[Source {i+1}: {meta.get('filename','?')}, chunk {meta.get('chunk_index',0)}]"
+            source_label = f"[Source {i + 1}: {meta.get('filename', '?')}, chunk {meta.get('chunk_index', 0)}]"
             context_parts.append(f"{source_label}\n{doc}")
         context = "\n\n---\n\n".join(context_parts)
 

@@ -3,12 +3,6 @@ Unit tests for RAG Engine components.
 Run: pytest tests/ -v
 """
 
-import pytest
-import tempfile
-import os
-from pathlib import Path
-from unittest.mock import MagicMock, patch
-
 
 # ── Test: text splitter behavior ──────────────────────────────────────────────
 def test_text_splitter_chunking():
@@ -129,7 +123,7 @@ def test_chunk_overlap():
     docs = [Document(page_content=long_text, metadata={})]
     chunks = splitter.split_documents(docs)
     if len(chunks) > 1:
-        end_of_first = chunks[0].page_content[-30:]
-        start_of_second = chunks[1].page_content[:50]
-        # Overlap means some content is shared
+        # Overlap means some content is shared across adjacent chunks
         assert len(chunks) >= 2
+        assert len(chunks[0].page_content) > 0
+        assert len(chunks[1].page_content) > 0
