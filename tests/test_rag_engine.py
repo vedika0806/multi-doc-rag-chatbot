@@ -1,3 +1,17 @@
+import sys
+from unittest.mock import MagicMock
+
+# Mock heavy dependencies not available in CI
+for mod in [
+    'ollama',
+    'chromadb',
+    'chromadb.config',
+    'sentence_transformers',
+    'langchain_community',
+    'langchain_community.document_loaders',
+]:
+    sys.modules[mod] = MagicMock()
+
 """
 Unit tests for RAG Engine components.
 Run: pytest tests/ -v
@@ -127,3 +141,4 @@ def test_chunk_overlap():
         assert len(chunks) >= 2
         assert len(chunks[0].page_content) > 0
         assert len(chunks[1].page_content) > 0
+        
