@@ -1,8 +1,10 @@
 # 🛡️ CyberRAG — Multi-Document Threat Intelligence Assistant
 
 > **RAG-powered cybersecurity Q&A system** | LangChain · ChromaDB · Ollama · Streamlit · Docker
+>
+A security analyst typically spends 2–4 hours manually searching through threat reports per investigation. This system reduces that to seconds, with citations, running entirely on-premises — no data leaves the machine.
 
-[![CI](https://github.com/YOUR_USERNAME/multi-doc-rag-chatbot/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/multi-doc-rag-chatbot/actions)
+[![CI](https://github.com/vedika0806/multi-doc-rag-chatbot/actions/workflows/ci.yml/badge.svg)](https://github.com/vedika0806/multi-doc-rag-chatbot/actions)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://python.org)
 [![LangChain](https://img.shields.io/badge/LangChain-0.2-green.svg)](https://langchain.com)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-0.5-orange.svg)](https://trychroma.com)
@@ -203,6 +205,16 @@ pytest tests/ -v --tb=short
 pytest tests/ --cov=app --cov-report=html
 ```
 
+---
+##  Try these queries out of the box
+The repo ships with 3 real cybersecurity intelligence documents. Clone and ask:
+```bash
+"What MITRE ATT&CK techniques does APT29 use for initial access?"
+"List all CVEs with CVSS score above 9.0 and their patch status"
+"What lateral movement techniques are most observed in 2024?"
+"What defensive mitigations are recommended against credential dumping?"
+"Which threat actor exploited CVE-2024-3400 and what did they deploy?"
+```
 ---
 
 ## 📊 Performance
