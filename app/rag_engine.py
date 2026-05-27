@@ -367,7 +367,6 @@ class RAGEngine:
         except Exception as e:
             logger.error(f"Clear failed: {e}")
             return False
-        
 
     @property
     def is_ready(self) -> bool:
@@ -376,4 +375,3 @@ class RAGEngine:
     @property
     def model_name(self) -> Optional[str]:
         return self._available_model
-
