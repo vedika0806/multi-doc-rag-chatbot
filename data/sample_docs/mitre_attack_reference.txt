@@ -1,0 +1,342 @@
+MITRE ATT&CK FRAMEWORK REFERENCE — ENTERPRISE v14
+Classification: TLP:WHITE
+Source: CyberRAG Sample Intelligence Library
+Based on: MITRE ATT&CK Enterprise Matrix v14.1
+
+═══════════════════════════════════════════════════════════════
+OVERVIEW
+═══════════════════════════════════════════════════════════════
+
+The MITRE ATT&CK (Adversarial Tactics, Techniques, and Common Knowledge)
+framework is a globally-accessible knowledge base of adversary tactics and
+techniques based on real-world observations. It is used as a foundation for
+threat models and methodologies in the private sector, government, and the
+cybersecurity product and service community.
+
+ATT&CK Enterprise Matrix covers:
+  - Windows, macOS, Linux environments
+  - Cloud (AWS, Azure, GCP, SaaS, IaaS)
+  - Network infrastructure
+  - Containers
+
+Current statistics (v14.1):
+  - Tactics: 14
+  - Techniques: 201
+  - Sub-techniques: 424
+  - Mitigations: 43
+  - Groups: 138
+  - Software: 740+
+
+═══════════════════════════════════════════════════════════════
+14 TACTICS — COMPLETE REFERENCE
+═══════════════════════════════════════════════════════════════
+
+TA0043 — RECONNAISSANCE
+  Definition: Gathering information to plan future adversary operations.
+  Goal: Understand target's infrastructure, personnel, and security posture.
+  Key techniques:
+    T1595 — Active Scanning (port scanning, vulnerability scanning)
+    T1592 — Gather Victim Host Information (hardware, software, firmware)
+    T1589 — Gather Victim Identity Information (email, credentials, names)
+    T1590 — Gather Victim Network Information (IP ranges, DNS, topology)
+    T1591 — Gather Victim Org Information (business relationships, employees)
+    T1598 — Phishing for Information (spearphishing for credentials/info)
+    T1597 — Search Closed Sources (dark web, threat intel purchases)
+    T1596 — Search Open Technical Databases (WHOIS, DNS, certificate CT logs)
+    T1593 — Search Open Websites/Domains (social media, job postings)
+
+TA0042 — RESOURCE DEVELOPMENT
+  Definition: Establishing resources to support operations.
+  Goal: Acquire infrastructure and capabilities before attacking.
+  Key techniques:
+    T1583 — Acquire Infrastructure (domains, VPS, botnets)
+    T1586 — Compromise Accounts (social media, email)
+    T1584 — Compromise Infrastructure (hijack legitimate servers)
+    T1587 — Develop Capabilities (malware, exploits, certificates)
+    T1585 — Establish Accounts (create fake personas)
+    T1588 — Obtain Capabilities (buy malware, tools, exploits)
+
+TA0001 — INITIAL ACCESS
+  Definition: Techniques used to gain initial foothold in a network.
+  Goal: Get inside the target environment.
+  Key techniques:
+    T1189 — Drive-by Compromise (malicious web content)
+    T1190 — Exploit Public-Facing Application (web apps, VPNs, firewalls)
+    T1133 — External Remote Services (VPN, RDP, Citrix)
+    T1200 — Hardware Additions (malicious USB, network implant)
+    T1566 — Phishing (spearphishing attachment, link, service)
+    T1091 — Replication Through Removable Media
+    T1195 — Supply Chain Compromise (software, hardware, dependencies)
+    T1078 — Valid Accounts (default, domain, local, cloud)
+
+TA0002 — EXECUTION
+  Definition: Running adversary-controlled code on a local or remote system.
+  Goal: Execute malicious code to accomplish objectives.
+  Key techniques:
+    T1059 — Command and Scripting Interpreter (PowerShell, Bash, Python, VBA)
+    T1609 — Container Administration Command
+    T1203 — Exploitation for Client Execution
+    T1559 — Inter-Process Communication (DDE, XPC)
+    T1106 — Native API (WinAPI, POSIX)
+    T1053 — Scheduled Task/Job (cron, at, systemd timers)
+    T1129 — Shared Modules (DLL loading)
+    T1072 — Software Deployment Tools (SCCM, Ansible, Chef)
+    T1569 — System Services (service execution, launchctl)
+    T1204 — User Execution (malicious file/link)
+    T1047 — Windows Management Instrumentation
+
+TA0003 — PERSISTENCE
+  Definition: Maintaining foothold across restarts, changed credentials, etc.
+  Goal: Ensure continued access to compromised systems.
+  Key techniques:
+    T1098 — Account Manipulation (SSH key addition, device enrollment)
+    T1197 — BITS Jobs (Windows Background Intelligent Transfer)
+    T1547 — Boot or Logon Autostart Execution (registry keys, startup folder)
+    T1037 — Boot or Logon Initialization Scripts (logon scripts, rc.d)
+    T1176 — Browser Extensions (malicious extensions)
+    T1554 — Compromise Host Software Binary (trojanize legitimate binary)
+    T1136 — Create Account (local, domain, cloud)
+    T1543 — Create or Modify System Process (services, launchd, systemd)
+    T1546 — Event Triggered Execution (COM hijacking, .bash_profile)
+    T1133 — External Remote Services
+    T1574 — Hijack Execution Flow (DLL hijacking, PATH manipulation)
+    T1525 — Implant Internal Image (container/VM image)
+    T1556 — Modify Authentication Process (password filter DLL, MFA bypass)
+    T1137 — Office Application Startup (templates, add-ins)
+    T1542 — Pre-OS Boot (bootkit, UEFI implant)
+    T1053 — Scheduled Task/Job
+    T1505 — Server Software Component (web shell, IIS module, SQL procedure)
+    T1078 — Valid Accounts
+
+TA0004 — PRIVILEGE ESCALATION
+  Definition: Gaining higher-level permissions on a system or network.
+  Goal: Obtain administrator, root, or SYSTEM level privileges.
+  Key techniques:
+    T1548 — Abuse Elevation Control Mechanism (sudo, UAC bypass, setuid)
+    T1134 — Access Token Manipulation (token impersonation, make/duplicate)
+    T1547 — Boot or Logon Autostart Execution
+    T1037 — Boot or Logon Initialization Scripts
+    T1543 — Create or Modify System Process
+    T1484 — Domain or Tenant Policy Modification (GPO modification)
+    T1611 — Escape to Host (container escape)
+    T1546 — Event Triggered Execution
+    T1068 — Exploitation for Privilege Escalation (local exploits)
+    T1574 — Hijack Execution Flow
+    T1055 — Process Injection (DLL, PE, shellcode injection)
+    T1053 — Scheduled Task/Job
+    T1078 — Valid Accounts
+
+TA0005 — DEFENSE EVASION
+  Definition: Avoiding detection throughout the compromise.
+  Goal: Stay undetected while achieving objectives.
+  This is the LARGEST tactic with most techniques (40+).
+  Key techniques:
+    T1140 — Deobfuscate/Decode Files or Information
+    T1610 — Deploy Container (for isolation)
+    T1006 — Direct Volume Access (bypass filesystem filters)
+    T1480 — Execution Guardrails (limit execution to target env only)
+    T1211 — Exploitation for Defense Evasion
+    T1222 — File and Directory Permissions Modification
+    T1564 — Hide Artifacts (hidden files, NTFS ADS, RunAs child)
+    T1574 — Hijack Execution Flow
+    T1562 — Impair Defenses (disable AV, AMSI bypass, firewall rules)
+    T1070 — Indicator Removal (clear logs, timestomping, delete files)
+    T1202 — Indirect Command Execution (LOLBAS)
+    T1036 — Masquerading (rename tools, fake path, invalid code sig)
+    T1556 — Modify Authentication Process
+    T1578 — Modify Cloud Compute Infrastructure
+    T1112 — Modify Registry
+    T1601 — Modify System Image (router/switch firmware)
+    T1599 — Network Boundary Bridging
+    T1027 — Obfuscated Files or Information (encoding, packing, steganography)
+    T1647 — Plist File Modification (macOS)
+    T1055 — Process Injection
+    T1207 — Rogue Domain Controller (DCShadow)
+    T1014 — Rootkit
+    T1218 — System Binary Proxy Execution (LOLBAS: regsvr32, mshta, rundll32)
+    T1216 — System Script Proxy Execution
+    T1221 — Template Injection
+    T1205 — Traffic Signaling (port knocking, magic packet)
+    T1127 — Trusted Developer Utilities Proxy Execution (MSBuild, dnx)
+    T1535 — Unused/Unsupported Cloud Regions
+    T1550 — Use Alternate Authentication Material (PtH, PtT, web cookies)
+    T1078 — Valid Accounts
+    T1497 — Virtualization/Sandbox Evasion
+    T1600 — Weaken Encryption
+    T1220 — XSL Script Processing
+
+TA0006 — CREDENTIAL ACCESS
+  Definition: Stealing account names and passwords.
+  Goal: Obtain credentials for further access and lateral movement.
+  Key techniques:
+    T1557 — Adversary-in-the-Middle (AiTM, LLMNR/NBT-NS poisoning)
+    T1110 — Brute Force (password spraying, credential stuffing)
+    T1555 — Credentials from Password Stores (browsers, credential manager)
+    T1212 — Exploitation for Credential Access
+    T1187 — Forced Authentication (UNC path injection)
+    T1606 — Forge Web Credentials (SAML tokens, web cookies)
+    T1056 — Input Capture (keylogging, credential API hooking)
+    T1556 — Modify Authentication Process
+    T1111 — Multi-Factor Authentication Interception
+    T1621 — Multi-Factor Authentication Request Generation (MFA fatigue)
+    T1040 — Network Sniffing
+    T1003 — OS Credential Dumping (LSASS, SAM, NTDS, DCSync)
+    T1528 — Steal Application Access Token (OAuth tokens)
+    T1558 — Steal or Forge Kerberos Tickets (Kerberoasting, AS-REP roasting)
+    T1539 — Steal Web Session Cookie
+    T1552 — Unsecured Credentials (in files, env vars, cloud metadata)
+
+TA0007 — DISCOVERY
+  Definition: Figuring out the environment after gaining access.
+  Goal: Understand network topology, users, and valuable assets.
+  Key techniques:
+    T1087 — Account Discovery (local accounts, domain accounts, cloud)
+    T1010 — Application Window Discovery
+    T1217 — Browser Information Discovery
+    T1580 — Cloud Infrastructure Discovery
+    T1538 — Cloud Service Dashboard
+    T1526 — Cloud Service Discovery
+    T1619 — Cloud Storage Object Discovery
+    T1613 — Container and Resource Discovery
+    T1482 — Domain Trust Discovery
+    T1083 — File and Directory Discovery
+    T1615 — Group Policy Discovery
+    T1046 — Network Service Discovery (port scanning)
+    T1135 — Network Share Discovery
+    T1040 — Network Sniffing
+    T1201 — Password Policy Discovery
+    T1120 — Peripheral Device Discovery
+    T1069 — Permission Groups Discovery
+    T1057 — Process Discovery
+    T1012 — Query Registry
+    T1018 — Remote System Discovery
+    T1518 — Software Discovery (security software, installed applications)
+    T1082 — System Information Discovery (OS, hardware, env vars)
+    T1614 — System Location Discovery
+    T1016 — System Network Configuration Discovery
+    T1049 — System Network Connections Discovery
+    T1033 — System Owner/User Discovery
+    T1007 — System Service Discovery
+    T1124 — System Time Discovery
+    T1497 — Virtualization/Sandbox Evasion
+
+TA0008 — LATERAL MOVEMENT
+  Definition: Moving through the environment to reach target systems.
+  Goal: Pivot from initial compromise to high-value targets.
+  Key techniques:
+    T1210 — Exploitation of Remote Services
+    T1534 — Internal Spearphishing
+    T1570 — Lateral Tool Transfer
+    T1563 — Remote Service Session Hijacking (RDP, SSH)
+    T1021 — Remote Services (RDP, SMB/Windows Admin Shares, SSH, VNC, WinRM)
+    T1091 — Replication Through Removable Media
+    T1072 — Software Deployment Tools
+    T1550 — Use Alternate Authentication Material (PtH, PtT)
+    T1080 — Taint Shared Content
+
+TA0009 — COLLECTION
+  Definition: Gathering data of interest to achieve objectives.
+  Goal: Identify and collect targeted data before exfiltration.
+  Key techniques:
+    T1560 — Archive Collected Data (compress, encrypt before exfil)
+    T1123 — Audio Capture
+    T1119 — Automated Collection
+    T1185 — Browser Session Hijacking
+    T1115 — Clipboard Data
+    T1530 — Data from Cloud Storage
+    T1602 — Data from Configuration Repository (SNMP MIB, network configs)
+    T1213 — Data from Information Repositories (SharePoint, Confluence)
+    T1005 — Data from Local System
+    T1039 — Data from Network Shared Drive
+    T1025 — Data from Removable Media
+    T1074 — Data Staged (local or remote staging)
+    T1114 — Email Collection (local, remote, email forwarding)
+    T1056 — Input Capture
+    T1185 — Man in the Browser
+    T1113 — Screen Capture
+    T1125 — Video Capture
+
+TA0011 — COMMAND AND CONTROL
+  Definition: Communicating with compromised systems to control them.
+  Goal: Maintain reliable communication channel with compromised hosts.
+  Key techniques:
+    T1071 — Application Layer Protocol (web, DNS, mail, file transfer)
+    T1092 — Communication Through Removable Media
+    T1132 — Data Encoding (standard, non-standard)
+    T1001 — Data Obfuscation (junk data, steganography, protocol impersonation)
+    T1568 — Dynamic Resolution (DGA, DNS calculation, fast flux)
+    T1573 — Encrypted Channel (symmetric, asymmetric)
+    T1008 — Fallback Channels
+    T1105 — Ingress Tool Transfer
+    T1104 — Multi-Stage Channels
+    T1095 — Non-Application Layer Protocol (ICMP, UDP, custom protocol)
+    T1571 — Non-Standard Port
+    T1572 — Protocol Tunneling (DNS, HTTP, SSH tunneling)
+    T1090 — Proxy (internal, external, multi-hop, domain fronting)
+    T1219 — Remote Access Software (TeamViewer, AnyDesk — legitimate abuse)
+    T1205 — Traffic Signaling
+    T1102 — Web Service (legitimate services: GitHub, Twitter, Dropbox as C2)
+
+TA0010 — EXFILTRATION
+  Definition: Stealing data from the target network.
+  Goal: Transfer collected data to attacker-controlled infrastructure.
+  Key techniques:
+    T1020 — Automated Exfiltration
+    T1030 — Data Transfer Size Limits (stay under DLP thresholds)
+    T1048 — Exfiltration Over Alternative Protocol (DNS, ICMP, SMTP)
+    T1041 — Exfiltration Over C2 Channel
+    T1011 — Exfiltration Over Other Network Medium (Bluetooth, cellular)
+    T1052 — Exfiltration Over Physical Medium (USB)
+    T1567 — Exfiltration Over Web Service (cloud storage, code repositories)
+    T1029 — Scheduled Transfer (blend with normal business hours)
+
+TA0040 — IMPACT
+  Definition: Disrupting availability or integrity; financial harm.
+  Goal: Manipulate, interrupt, or destroy systems and data.
+  Key techniques:
+    T1531 — Account Access Removal (lock out defenders)
+    T1485 — Data Destruction (wiper malware)
+    T1486 — Data Encrypted for Impact (ransomware)
+    T1565 — Data Manipulation (stored, transmitted, runtime)
+    T1491 — Defacement (internal, external)
+    T1561 — Disk Wipe
+    T1499 — Endpoint Denial of Service
+    T1657 — Financial Theft (BEC, crypto theft)
+    T1495 — Firmware Corruption
+    T1490 — Inhibit System Recovery (delete VSS, disable backup)
+    T1498 — Network Denial of Service
+    T1496 — Resource Hijacking (cryptomining)
+    T1489 — Service Stop
+    T1529 — System Shutdown/Reboot
+
+═══════════════════════════════════════════════════════════════
+TOP 10 MOST OBSERVED TECHNIQUES (2023-2024)
+═══════════════════════════════════════════════════════════════
+
+Rank | Technique ID | Name                           | % Incidents
+-----|--------------|--------------------------------|------------
+1    | T1059        | Command/Scripting Interpreter  | 67%
+2    | T1078        | Valid Accounts                 | 58%
+3    | T1566        | Phishing                       | 54%
+4    | T1190        | Exploit Public-Facing App      | 49%
+5    | T1486        | Data Encrypted for Impact      | 45%
+6    | T1027        | Obfuscated Files/Information   | 43%
+7    | T1003        | OS Credential Dumping          | 41%
+8    | T1562        | Impair Defenses                | 38%
+9    | T1036        | Masquerading                   | 35%
+10   | T1021        | Remote Services                | 34%
+
+Source: Red Canary Threat Detection Report 2024, Mandiant M-Trends 2024
+
+═══════════════════════════════════════════════════════════════
+REFERENCES
+═══════════════════════════════════════════════════════════════
+
+1. MITRE ATT&CK Enterprise Matrix: https://attack.mitre.org/matrices/enterprise/
+2. ATT&CK Navigator Tool: https://mitre-attack.github.io/attack-navigator/
+3. Red Canary Threat Detection Report 2024
+4. Mandiant M-Trends 2024
+5. CISA MITRE ATT&CK Mapping Guide
+
+Report compiled for: CyberRAG Portfolio Demo
+Classification: TLP:WHITE

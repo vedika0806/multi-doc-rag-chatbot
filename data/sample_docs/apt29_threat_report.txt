@@ -1,0 +1,308 @@
+THREAT INTELLIGENCE REPORT: APT29 (Cozy Bear)
+Classification: TLP:WHITE — Unrestricted Distribution
+Report Date: 2024-Q1
+Source: CyberRAG Sample Intelligence Library
+
+═══════════════════════════════════════════════════════════════
+EXECUTIVE SUMMARY
+═══════════════════════════════════════════════════════════════
+
+APT29, also known as Cozy Bear, The Dukes, and Midnight Blizzard, is a highly
+sophisticated threat actor attributed to the Russian Foreign Intelligence Service
+(SVR). Active since at least 2008, APT29 primarily targets government entities,
+diplomatic missions, think tanks, healthcare organizations, and technology
+companies across NATO member states, Europe, and North America.
+
+This report documents observed TTPs (Tactics, Techniques, and Procedures) from
+confirmed intrusions in 2023-2024, with specific focus on cloud infrastructure
+targeting, supply chain compromise, and advanced persistence mechanisms.
+
+═══════════════════════════════════════════════════════════════
+THREAT ACTOR PROFILE
+═══════════════════════════════════════════════════════════════
+
+Name: APT29
+Aliases: Cozy Bear, The Dukes, Office Monkeys, CozyCar, MiniDuke, CosmicDuke,
+         OnionDuke, Midnight Blizzard (Microsoft), Nobelium (Microsoft)
+Attribution: Russian Foreign Intelligence Service (SVR RF)
+Motivation: Espionage, Intelligence Collection, Long-term Access
+Target Sectors: Government, Defense, Technology, Healthcare, Think Tanks,
+                Energy, Financial Services
+Geographic Focus: USA, UK, EU member states, NATO allies, Ukraine
+
+Sophistication Level: NATION-STATE (Tier 1)
+Operational Security: Extremely High
+Persistence: Long-term (months to years undetected)
+
+═══════════════════════════════════════════════════════════════
+OBSERVED TACTICS, TECHNIQUES, AND PROCEDURES (TTPs)
+═══════════════════════════════════════════════════════════════
+
+INITIAL ACCESS
+──────────────
+T1566.001 — Spearphishing Attachment
+  APT29 uses highly targeted spearphishing emails with malicious attachments.
+  Observed file types: .docx (macro-enabled), .pdf (with embedded JavaScript),
+  .lnk (shortcut files), .iso (disk images bypassing Mark-of-the-Web).
+  Lure themes: diplomatic correspondence, healthcare policy, HR documents,
+  conference invitations.
+
+T1566.002 — Spearphishing Link
+  Delivered via compromised legitimate email accounts to evade SPF/DKIM checks.
+  Links redirect through multiple legitimate services (OneDrive, Dropbox, Google
+  Drive) before delivering payload. URL shorteners and redirect chains used to
+  obscure final destination.
+
+T1195.002 — Supply Chain Compromise: Software Supply Chain
+  The SolarWinds SUNBURST backdoor (2020) remains the most significant known
+  supply chain operation. Pattern repeated in 2023 with targeted MSP compromise.
+
+T1078.004 — Valid Accounts: Cloud Accounts
+  Credential theft via adversary-in-the-middle (AiTM) phishing targeting
+  Microsoft 365 and Azure AD accounts. MFA bypass through session token theft.
+
+EXECUTION
+─────────
+T1059.001 — Command and Scripting Interpreter: PowerShell
+  Extensive use of PowerShell for payload delivery, lateral movement, and
+  data exfiltration. Observed use of AMSI bypass techniques.
+  Sample obfuscation: Base64 encoded commands, string concatenation, IEX
+  (Invoke-Expression) with downloaded content.
+
+T1059.005 — Command and Scripting Interpreter: Visual Basic
+  VBA macros in Office documents used as initial execution vector.
+  Macros spawn cmd.exe or PowerShell child processes.
+
+T1047 — Windows Management Instrumentation (WMI)
+  WMI used for lateral movement, persistence (WMI subscriptions), and
+  remote execution. WMI event subscriptions survive reboots.
+
+PERSISTENCE
+──────────
+T1053.005 — Scheduled Task/Job: Scheduled Task
+  Creation of scheduled tasks masquerading as legitimate Windows maintenance
+  tasks. Task names observed: "MicrosoftEdgeUpdateTaskMachineCore",
+  "GoogleUpdateTaskMachineUA", "AdobeFlashPlayerUpdate".
+
+T1547.001 — Boot or Logon Autostart Execution: Registry Run Keys
+  HKCU\Software\Microsoft\Windows\CurrentVersion\Run keys used for persistence.
+
+T1078 — Valid Accounts
+  Maintaining persistent access through stolen credentials, password spraying,
+  and Kerberoasting attacks on Active Directory service accounts.
+
+DEFENSE EVASION
+───────────────
+T1027 — Obfuscated Files or Information
+  Multi-layer obfuscation: XOR encoding, Base64, custom encryption algorithms.
+  Steganography observed: payloads embedded in PNG/JPEG files.
+
+T1036.005 — Masquerading: Match Legitimate Name or Location
+  Malware binaries named to mimic legitimate Windows processes:
+  svchost.exe, lsass.exe, explorer.exe placed in non-standard directories.
+
+T1562.001 — Impair Defenses: Disable or Modify Tools
+  Attempts to disable Windows Defender via registry modification and
+  PowerShell commands. EDR evasion via process injection techniques.
+
+T1070.004 — Indicator Removal: File Deletion
+  Systematic deletion of logs, prefetch files, and artifacts post-intrusion.
+  Use of SDelete (Sysinternals) for secure file wiping.
+
+CREDENTIAL ACCESS
+─────────────────
+T1003.001 — OS Credential Dumping: LSASS Memory
+  Use of Mimikatz (and custom variants) for credential dumping from LSASS.
+  Also observed: comsvcs.dll MiniDump technique to avoid AV detection.
+
+T1558.003 — Steal or Forge Kerberos Tickets: Kerberoasting
+  Targeting Active Directory service accounts with SPNs for offline password
+  cracking. Accounts with weak passwords compromised within hours.
+
+T1111 — Multi-Factor Authentication Interception
+  AiTM proxy frameworks (Evilginx2, Modlishka) used to intercept MFA tokens.
+  Real-time relay of authentication tokens to maintain session access.
+
+LATERAL MOVEMENT
+────────────────
+T1021.001 — Remote Services: Remote Desktop Protocol
+  RDP used for lateral movement after credential theft. Observed on non-standard
+  ports (3390, 3391) to evade detection. BlueKeep (CVE-2019-0708) exploited
+  in unpatched environments.
+
+T1021.006 — Remote Services: Windows Remote Management
+  WinRM used for remote PowerShell execution across compromised hosts.
+
+T1550.002 — Use Alternate Authentication Material: Pass the Hash
+  Pass-the-Hash attacks using captured NTLM hashes for lateral movement without
+  knowing plaintext credentials.
+
+COLLECTION
+──────────
+T1005 — Data from Local System
+  Targeted collection of documents matching keywords: "classified", "secret",
+  "NATO", "intelligence", "policy", "diplomatic", "strategy".
+
+T1039 — Data from Network Shared Drive
+  Enumeration and staging of data from network shares, SharePoint, and
+  collaboration platforms.
+
+T1114.002 — Email Collection: Remote Email Collection
+  Exchange Web Services (EWS) API used to bulk-export mailbox contents.
+  Microsoft 365 Graph API abused for email exfiltration.
+
+COMMAND AND CONTROL
+───────────────────
+T1071.001 — Application Layer Protocol: Web Protocols
+  C2 communication over HTTPS using legitimate cloud services:
+  Microsoft OneDrive, Google Drive, Dropbox, GitHub as C2 channels (T1102).
+
+T1090.003 — Proxy: Multi-hop Proxy
+  TOR network and VPN services used to anonymize C2 infrastructure.
+  Compromised SOHO routers used as proxy nodes.
+
+T1573.001 — Encrypted Channel: Symmetric Cryptography
+  Custom C2 protocols with AES-256 encryption. Certificate pinning to
+  prevent SSL inspection.
+
+EXFILTRATION
+────────────
+T1048.003 — Exfiltration Over Alternative Protocol: Exfiltration Over Unencrypted Non-C2 Protocol
+  DNS tunneling for data exfiltration in high-security environments.
+  Tools observed: DNScat2, Iodine.
+
+T1041 — Exfiltration Over C2 Channel
+  Primary exfiltration via established C2 channels. Data compressed (ZIP, RAR)
+  and encrypted before transmission. Average exfil rate: 50-200MB per session.
+
+═══════════════════════════════════════════════════════════════
+OBSERVED MALWARE AND TOOLS
+═══════════════════════════════════════════════════════════════
+
+SUNBURST (SolarWinds Backdoor)
+  CVE: N/A (supply chain, not a CVE)
+  Type: Backdoor / RAT
+  Description: DLL implanted into SolarWinds Orion update mechanism.
+  Dormant for 12-14 days post-installation to evade sandbox detection.
+  C2 via DNS-based protocol with domain generation algorithm (DGA).
+
+WELLMESS / WELLMAIL
+  Type: Implant (Go/C#)
+  Description: Used against COVID-19 vaccine research organizations (2020).
+  Capabilities: File upload/download, arbitrary command execution.
+  C2 via HTTP/HTTPS with custom protocol.
+
+SUNSHUTTLE (GoldMax)
+  Type: Second-stage backdoor (Go)
+  Description: Uses Bing search queries as C2 beacon to blend with normal traffic.
+  Disguises C2 traffic as legitimate search engine requests.
+
+COZYDUKE / MINIDUKE
+  Type: Backdoor
+  Description: Modular malware framework. Uses Twitter, GitHub, Imgur for C2.
+  Exploits: CVE-2017-0199 (Office), CVE-2017-11882 (Equation Editor).
+
+FOGGYWEB
+  Type: AD FS backdoor
+  Description: Targets Active Directory Federation Services (AD FS) servers.
+  Persists as HTTP module, intercepts SAML token requests.
+
+═══════════════════════════════════════════════════════════════
+RELEVANT CVEs
+═══════════════════════════════════════════════════════════════
+
+CVE-2023-23397 — Microsoft Outlook Privilege Escalation
+  CVSS Score: 9.8 (Critical)
+  Description: Zero-click vulnerability in Microsoft Outlook. Attacker sends
+  specially crafted email triggering automatic authentication to attacker-controlled
+  server, leaking NTLM hash without user interaction.
+  Exploitation: Observed in APT29 campaigns targeting European government entities.
+  Patch: KB5023706 (March 2023 Patch Tuesday)
+
+CVE-2022-21919 — Windows User Profile Service EoP
+  CVSS Score: 7.0 (High)
+  Description: Local privilege escalation in Windows User Profile Service.
+  Used for privilege escalation post-initial access.
+
+CVE-2021-40539 — Zoho ManageEngine ADSelfService Plus RCE
+  CVSS Score: 9.8 (Critical)
+  Description: Authentication bypass + RCE in Zoho ManageEngine.
+  Exploited for initial access to government networks.
+
+CVE-2020-4006 — VMware Workspace ONE Access SSRF/RCE
+  CVSS Score: 9.1 (Critical)
+  Description: Command injection vulnerability. Exploited by APT29 for
+  pivoting to cloud infrastructure.
+
+═══════════════════════════════════════════════════════════════
+INDICATORS OF COMPROMISE (IOCs)
+═══════════════════════════════════════════════════════════════
+
+NOTE: The following are representative examples for demonstration purposes.
+Always verify IOCs against current threat intelligence feeds.
+
+Domain IOCs (C2 Infrastructure Pattern):
+  - *.azurewebsites[.]net (legitimate service abuse)
+  - *.blob[.]core[.]windows[.]net (legitimate service abuse)
+  - avsvmcloud[.]com (SUNBURST C2 — sinkholed)
+  - databasegalore[.]com (SUNBURST C2 — sinkholed)
+
+File Hash IOCs (SHA-256 — Representative):
+  - SUNBURST DLL: a25cadd48d70f6ea0c4a241d99c5d01..."
+  - SUNSHUTTLE: 9d2739...
+
+Registry Artifacts:
+  HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Custom\
+  HKCU\SOFTWARE\Microsoft\Office\[version]\Outlook\Profiles\
+
+Process Anomalies:
+  - svchost.exe spawning from unexpected parent processes
+  - powershell.exe with -EncodedCommand flags
+  - wscript.exe or cscript.exe executing from %TEMP%
+
+═══════════════════════════════════════════════════════════════
+DEFENSIVE MITIGATIONS
+═══════════════════════════════════════════════════════════════
+
+IMMEDIATE ACTIONS (Priority 1):
+  1. Enforce phishing-resistant MFA (FIDO2/WebAuthn) for all remote access
+  2. Implement Conditional Access policies restricting legacy authentication
+  3. Enable Microsoft Defender for Identity with alert baselines
+  4. Audit Azure AD / Entra ID for unfamiliar OAuth application consents
+  5. Deploy LSASS protection (RunAsPPL) via Windows Credential Guard
+
+DETECTION RULES (MITRE D3FEND):
+  - Alert on PowerShell with -EncodedCommand or -WindowStyle Hidden flags
+  - Detect LSASS memory access from non-Microsoft signed processes
+  - Monitor for scheduled tasks created by non-SYSTEM accounts
+  - Alert on WMI event subscription creation
+  - Detect DNS queries with high entropy subdomains (potential DNS tunneling)
+
+HARDENING MEASURES:
+  - Disable legacy authentication protocols (NTLM where possible)
+  - Implement Attack Surface Reduction (ASR) rules in Microsoft Defender
+  - Enable Protected Users security group for privileged accounts
+  - Deploy Microsoft Sentinel with APT29-specific detection rules
+  - Regular purple team exercises simulating APT29 TTPs
+
+═══════════════════════════════════════════════════════════════
+CONFIDENCE ASSESSMENT
+═══════════════════════════════════════════════════════════════
+
+Attribution Confidence: HIGH (corroborated by multiple intelligence sources)
+TTP Accuracy: HIGH (based on confirmed intrusion forensics)
+IOC Freshness: MEDIUM (infrastructure rotates frequently — verify before use)
+
+═══════════════════════════════════════════════════════════════
+REFERENCES
+═══════════════════════════════════════════════════════════════
+
+1. CISA Advisory AA21-148A — Sophisticated Spearphishing Campaign
+2. NCSC UK Advisory — APT29 COVID-19 Vaccine Research Targeting
+3. Microsoft MSTIC Blog — NOBELIUM threat actor
+4. FireEye/Mandiant — UNC2452 / SUNBURST Investigation
+5. MITRE ATT&CK — Group G0016 (APT29)
+6. NSA/CISA Joint Advisory — Russian SVR Cyber Operations
+
+Report compiled for: CyberRAG Portfolio Demo
+Classification: TLP:WHITE

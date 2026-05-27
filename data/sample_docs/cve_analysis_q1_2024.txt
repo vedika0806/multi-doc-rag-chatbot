@@ -1,0 +1,268 @@
+VULNERABILITY INTELLIGENCE REPORT: Critical CVEs Q1 2024
+Classification: TLP:WHITE
+Source: CyberRAG Sample Intelligence Library
+Coverage Period: January — March 2024
+
+═══════════════════════════════════════════════════════════════
+EXECUTIVE SUMMARY
+═══════════════════════════════════════════════════════════════
+
+This report covers 8 critical and high-severity vulnerabilities discovered and
+actively exploited in Q1 2024. Three vulnerabilities reached CVSS scores of 10.0.
+Nation-state actors and ransomware groups were confirmed exploiting 5 of these
+vulnerabilities within days of public disclosure — in some cases before patches
+were available (0-day exploitation).
+
+Key statistics Q1 2024:
+  - Total CVEs published: 7,489
+  - Critical (CVSS 9.0+): 412
+  - Actively exploited in the wild: 47
+  - Average patch lag (enterprise): 21 days
+  - Average time-to-exploit after disclosure: 4.76 days
+
+═══════════════════════════════════════════════════════════════
+CRITICAL VULNERABILITY ANALYSIS
+═══════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────────────────────
+CVE-2024-21762 — Fortinet FortiOS SSL VPN Out-of-Bounds Write
+─────────────────────────────────────────────────────────────
+CVSS Score: 9.6 (Critical)
+CWE: CWE-787 (Out-of-bounds Write)
+Affected Products: FortiOS 6.0, 6.2, 6.4, 7.0, 7.2, 7.4 (SSL VPN component)
+Patch Available: Yes (FortiOS 7.4.3, 7.2.7, 7.0.14)
+CISA KEV: Yes — added February 9, 2024
+
+Technical Details:
+  An out-of-bounds write vulnerability in FortiOS SSL VPN allows an
+  unauthenticated remote attacker to execute arbitrary code or commands via
+  specially crafted HTTP requests to the SSL VPN web management interface.
+  The vulnerability exists in the SSL VPN web daemon (sslvpnd).
+
+Exploitation Evidence:
+  - Exploitation observed within 24 hours of patch release
+  - Threat actors: suspected Volt Typhoon (Chinese nation-state) and multiple
+    ransomware affiliates
+  - Attack vector: Direct internet exposure of SSL VPN interface
+  - Post-exploitation: Credential dumping, lateral movement to internal networks
+  - Estimated exposed devices at disclosure: ~150,000 globally
+
+MITRE ATT&CK Mapping:
+  T1190 — Exploit Public-Facing Application
+  T1133 — External Remote Services
+  T1078 — Valid Accounts (post-exploitation)
+
+Mitigation:
+  1. Apply patches immediately (FortiOS 7.4.3+ / 7.2.7+ / 7.0.14+)
+  2. If patching not immediately possible: disable SSL VPN
+  3. Review VPN logs for indicators of compromise
+  4. Enable logging to SIEM and alert on anomalous VPN activity
+
+─────────────────────────────────────────────────────────────
+CVE-2024-1709 — ConnectWise ScreenConnect Authentication Bypass
+─────────────────────────────────────────────────────────────
+CVSS Score: 10.0 (Critical — Maximum)
+CWE: CWE-288 (Authentication Bypass Using an Alternate Path)
+Affected Products: ConnectWise ScreenConnect < 23.9.8
+Patch Available: Yes (23.9.8)
+CISA KEV: Yes — added February 22, 2024
+
+Technical Details:
+  Authentication bypass vulnerability in the setup wizard of ConnectWise
+  ScreenConnect allows an unauthenticated attacker to create administrative
+  accounts, bypassing all authentication controls. The setup wizard at
+  /SetupWizard.aspx remains accessible even after initial setup completion.
+
+  Paired with CVE-2024-1708 (path traversal, CVSS 8.4), attackers achieve
+  full remote code execution with SYSTEM-level privileges.
+
+Exploitation Evidence:
+  - Exploited within hours of PoC publication (February 21, 2024)
+  - Mass exploitation observed: 8,000+ ScreenConnect instances targeted
+  - Threat actors: LockBit ransomware affiliates, Black Basta, multiple APTs
+  - Notable incident: Healthcare sector targeting (HIPAA-covered entities)
+  - Cobalt Strike beacon deployment observed as primary post-exploitation tool
+
+Impact Assessment:
+  - Remote monitoring and management (RMM) tools = keys to kingdom
+  - Attacker gains control of all managed endpoints through one compromise
+  - MSP compromise leads to downstream customer infections (supply chain risk)
+
+Mitigation:
+  1. Update immediately to 23.9.8 or higher
+  2. Review administrative accounts for unauthorized additions
+  3. Audit connection logs for suspicious remote sessions
+  4. Implement network segmentation for RMM infrastructure
+  5. Enable MFA on all ScreenConnect administrative accounts
+
+─────────────────────────────────────────────────────────────
+CVE-2024-3400 — Palo Alto Networks PAN-OS Command Injection (0-day)
+─────────────────────────────────────────────────────────────
+CVSS Score: 10.0 (Critical — Maximum)
+CWE: CWE-77 (Command Injection)
+Affected Products: PAN-OS 10.2, 11.0, 11.1 with GlobalProtect + device telemetry
+Patch Available: Yes (released April 14, 2024)
+CISA KEV: Yes — added April 12, 2024 (before patch available)
+Zero-Day: Yes — exploited in the wild before patch
+
+Technical Details:
+  Command injection vulnerability in the GlobalProtect feature of Palo Alto
+  Networks PAN-OS software. An unauthenticated attacker can execute arbitrary
+  code with root privileges on the firewall. Requires GlobalProtect gateway
+  or portal to be configured AND device telemetry to be enabled.
+
+  Vulnerability exists in the session ID handling mechanism — attacker crafts
+  malicious session ID that is written to a log file in a location later
+  executed by the system.
+
+Exploitation Evidence:
+  - Disclosed by Volexity — named "Operation MidnightEclipse"
+  - Threat actor UTA0218 exploited as 0-day from March 26, 2024
+  - Backdoor deployed: UPSTYLE (custom Python backdoor on firewall itself)
+  - Secondary tool: DOWNSTYLE (network traffic interceptor)
+  - Post-exploitation: Internal network reconnaissance, credential theft,
+    exfiltration of firewall configurations and VPN credentials
+
+MITRE ATT&CK Mapping:
+  T1190 — Exploit Public-Facing Application
+  T1505.003 — Server Software Component: Web Shell
+  T1046 — Network Service Discovery
+  T1083 — File and Directory Discovery
+  T1041 — Exfiltration Over C2 Channel
+
+Mitigation:
+  1. Apply hotfixes immediately
+  2. Disable device telemetry as temporary workaround (if patching delayed)
+  3. Review GlobalProtect logs for anomalous session IDs
+  4. Check for unexpected files in /var/tmp/ or /tmp/
+  5. Verify firewall configuration integrity
+
+─────────────────────────────────────────────────────────────
+CVE-2024-27198 — JetBrains TeamCity Authentication Bypass
+─────────────────────────────────────────────────────────────
+CVSS Score: 9.8 (Critical)
+CWE: CWE-288 (Authentication Bypass)
+Affected Products: JetBrains TeamCity < 2023.11.4
+Patch Available: Yes (2023.11.4)
+CISA KEV: Yes
+
+Technical Details:
+  Authentication bypass in JetBrains TeamCity CI/CD server allows
+  unauthenticated remote code execution. Attackers can create administrator
+  accounts or execute code without authentication.
+
+  CI/CD servers are high-value targets: they have access to source code,
+  secrets/credentials, deployment pipelines, and production infrastructure.
+
+Exploitation Evidence:
+  - Mass exploitation began within days of patch release
+  - Nation-state actors: APT29 (NOBELIUM) confirmed exploiting this CVE
+  - Criminal groups: Multiple ransomware operators
+  - Post-exploitation artifacts: Mimikatz, Cobalt Strike, web shells
+  - Downstream impact: Source code theft, supply chain compromise risk
+
+─────────────────────────────────────────────────────────────
+CVE-2024-21887 — Ivanti Connect Secure Command Injection
+─────────────────────────────────────────────────────────────
+CVSS Score: 9.1 (Critical)
+CWE: CWE-77 (Command Injection)
+Affected Products: Ivanti Connect Secure, Ivanti Policy Secure (all versions)
+Patch Available: Delayed (workaround available)
+CISA KEV: Yes — Emergency Directive ED-24-01 issued
+
+Technical Details:
+  Command injection vulnerability in web components of Ivanti Connect Secure
+  (formerly Pulse Connect Secure). When chained with CVE-2023-46805
+  (authentication bypass, CVSS 8.2), achieves unauthenticated RCE.
+
+  The vulnerability allows authenticated administrators (or bypassed auth)
+  to send specially crafted requests that execute arbitrary commands on
+  the appliance.
+
+Exploitation Evidence:
+  - Exploited as 0-day by UNC5221 (suspected Chinese nation-state)
+  - CISA issued emergency directive requiring federal agencies to disconnect
+    affected devices
+  - Novel malware implanted: ZIPLINE (passive backdoor), THINSPOOL,
+    WIREFIRE (web shell), LIGHTWIRE (web shell)
+  - Integrity checker bypass: Malware survived factory reset in some cases
+
+═══════════════════════════════════════════════════════════════
+RANSOMWARE VULNERABILITY EXPLOITATION TRENDS
+═══════════════════════════════════════════════════════════════
+
+Top CVEs exploited by ransomware groups Q1 2024:
+  1. CVE-2024-1709 (ConnectWise) — LockBit, Black Basta, Bl00dy
+  2. CVE-2023-4966 (Citrix Bleed) — Still heavily exploited Q1 2024
+  3. CVE-2024-21762 (Fortinet) — Multiple groups
+  4. CVE-2023-20198 (Cisco IOS XE) — Continued exploitation
+  5. CVE-2024-27198 (TeamCity) — Ransomware and APT groups
+
+Time-to-exploit statistics (Q1 2024):
+  - 0-day (exploited before patch): 3 CVEs
+  - Within 1 day of patch: 2 CVEs
+  - Within 1 week: 8 CVEs
+  - Within 30 days: 31 CVEs
+
+Most targeted sectors:
+  1. Healthcare (23% of ransomware incidents)
+  2. Government (18%)
+  3. Financial Services (15%)
+  4. Manufacturing (12%)
+  5. Education (10%)
+
+═══════════════════════════════════════════════════════════════
+PATCH PRIORITY MATRIX
+═══════════════════════════════════════════════════════════════
+
+CRITICAL — Patch within 24 hours:
+  ☑ CVE-2024-3400 (PAN-OS) — CVSS 10.0, actively exploited
+  ☑ CVE-2024-1709 (ConnectWise) — CVSS 10.0, mass exploitation
+  ☑ CVE-2024-21762 (Fortinet) — CVSS 9.6, CISA KEV
+
+HIGH — Patch within 72 hours:
+  ☑ CVE-2024-27198 (TeamCity) — CVSS 9.8, APT exploitation
+  ☑ CVE-2024-21887 (Ivanti) — CVSS 9.1, nation-state exploitation
+
+MEDIUM — Patch within 30 days:
+  ☑ CVE-2024-21893 (Ivanti SSRF) — CVSS 8.2
+  ☑ CVE-2024-20253 (Cisco) — CVSS 9.9
+
+═══════════════════════════════════════════════════════════════
+RECOMMENDED DETECTION QUERIES (SPLUNK/ELASTIC)
+═══════════════════════════════════════════════════════════════
+
+Fortinet CVE-2024-21762 Detection:
+  index=firewall sourcetype=fortigate
+  | search uri="/remote/hostcheck_validate" OR uri="/remote/login"
+  | where len(uri_query) > 500
+  | stats count by src_ip, uri
+
+PAN-OS CVE-2024-3400 Detection:
+  index=paloalto
+  | search app=globalprotect
+  | eval session_len=len(session_id)
+  | where session_len > 100
+  | stats count by src_ip, session_id
+
+TeamCity CVE-2024-27198 Detection:
+  index=teamcity
+  | search path="/app/rest/*" OR path="/RPC2"
+  | where isnull(user) OR user="anonymous"
+  | stats count by src_ip, path, status_code
+
+═══════════════════════════════════════════════════════════════
+REFERENCES
+═══════════════════════════════════════════════════════════════
+
+1. CISA Known Exploited Vulnerabilities Catalog (kev.cisa.gov)
+2. Volexity — "Zero-Day Exploitation of Unauthenticated Remote Code Execution"
+3. Palo Alto Networks PSIRT Advisory PAN-257847
+4. ConnectWise Security Advisory CWA-2024-008
+5. JetBrains Security Advisory TW-85690
+6. Fortinet PSIRT Advisory FG-IR-24-015
+7. Ivanti Security Advisory — Emergency Directive ED-24-01
+8. NVD National Vulnerability Database (nvd.nist.gov)
+
+Report compiled for: CyberRAG Portfolio Demo
+Classification: TLP:WHITE
