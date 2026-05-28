@@ -375,4 +375,3 @@ class RAGEngine:
     @property
     def model_name(self) -> Optional[str]:
         return self._available_model
-    
